@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>달이 정한 연(緣) — The Moon's Fated Bond</title>
+  <meta name="description" content="네 번의 만월, 하나의 연. 중화풍 판타지 로맨스 AI 시네마 「달이 정한 연(緣)」 본편을 감상하세요.">
+  <script>if('scrollRestoration'in history)history.scrollRestoration='manual';</script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Song+Myung&family=Gowun+Batang:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:    #050810;   /* 먹빛 남색 */
+      --ink2:   #0a0f1e;
+      --gold:   #d4af37;
+      --gold-l: #f0d878;
+      --moon:   #dfe6f0;   /* 은백 */
+      --crimson:#a3212e;   /* 진홍 */
+    }
+
+    body {
+      font-family: 'Gowun Batang', 'Noto Sans KR', serif;
+      background: var(--ink);
+      color: #f0ede4;
+      overflow-x: hidden;
+    }
+    .font-title  { font-family: 'Song Myung', serif; }
+    .font-eng    { font-family: 'Cormorant Garamond', serif; }
+    .font-ui     { font-family: 'Noto Sans KR', sans-serif; }
+
+    /* ── 마우스를 따르는 금빛 가루 ── */
+    .dust {
+      position: fixed;
+      pointer-events: none;
+      z-index: 60;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(253,246,216,0.95) 0%, rgba(212,175,55,0.8) 45%, transparent 75%);
+      box-shadow: 0 0 6px rgba(212,175,55,0.7);
+      animation: dust-fade 1s ease-out forwards;
+    }
+    @keyframes dust-fade {
+      0%   { transform: translate(0, 0) scale(1); opacity: 1; }
+      100% { transform: translate(var(--dx), var(--dy)) scale(0.15); opacity: 0; }
+    }
+
+    /* ── Play button pulse (금빛) ── */
+    @keyframes pulse-glow {
+      0%, 100% { transform: scale(1);    box-shadow: 0 0 0 0 rgba(212,175,55,0.5); }
+      50%       { transform: scale(1.08); box-shadow: 0 0 0 20px rgba(212,175,55,0); }
+    }
+    .play-pulse { animation: pulse-glow 2.4s ease-in-out infinite; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-10px); }
+    }
+    .float-anim { animation: float 3.2s ease-in-out infinite; }
+
+    /* ── 달빛 shimmer ── */
+    @keyframes shimmer {
+      0%   { background-position: -300% center; }
+      100% { background-position: 300% center; }
+    }
+    .shimmer-text {
+      background: linear-gradient(90deg, #d4af37, #fdf6d8, #dfe6f0, #d4af37);
+      background-size: 300% auto;
+      animation: shimmer 6s linear infinite;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .grad-gold {
+      background: linear-gradient(135deg, #f0d878, #d4af37, #b58b1f);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .grad-moon {
+      background: linear-gradient(135deg, #eaf4ff, #bfdcff, #8ab4e8);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .grad-crimson {
+      background: linear-gradient(135deg, #e0525f, #a3212e, #6d1017);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── Scroll reveal ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(36px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── Cards ── */
+    .story-card { transition: transform 0.35s ease, box-shadow 0.35s ease; }
+    .story-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 24px 48px rgba(212,175,55,0.18);
+    }
+    .story-card .card-img { transition: transform 0.5s ease; }
+    .story-card:hover .card-img { transform: scale(1.06); }
+
+    .char-card { transition: transform 0.3s ease; cursor: pointer; position: relative; }
+    .char-card:hover { transform: translateY(-8px); }
+
+    /* ── Speech bubble ── */
+    .speech {
+      display: none;
+      position: absolute;
+      bottom: calc(100% + 12px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: #f5efdf;
+      color: #241d10;
+      font-family: 'Gowun Batang', serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 9px 20px;
+      border-radius: 999px;
+      white-space: nowrap;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.5), 0 0 0 1px rgba(212,175,55,0.5);
+      z-index: 20;
+    }
+    .speech::after {
+      content: '';
+      position: absolute;
+      top: 100%; left: 50%;
+      transform: translateX(-50%);
+      border: 7px solid transparent;
+      border-top-color: #f5efdf;
+    }
+    .char-card.speak .speech { display: block; }
+
+    /* ── Modals ── */
+    #videoModal, #lightbox {
+      display: flex;
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(2,4,10,0.94);
+      backdrop-filter: blur(10px);
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.25s ease, visibility 0.25s ease;
+    }
+    #videoModal.open, #lightbox.open {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    /* ── Nav ── */
+    #mainNav { transition: background 0.3s ease, border-color 0.3s ease; }
+    #mainNav.scrolled {
+      background: rgba(5,8,16,0.96) !important;
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(212,175,55,0.12);
+    }
+
+    /* ── Toast ── */
+    #toast {
+      position: fixed;
+      bottom: 88px;
+      left: 50%;
+      transform: translateX(-50%) translateY(12px);
+      background: #12172a;
+      border: 1px solid rgba(212,175,55,0.45);
+      color: #f0ede4;
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 0.82rem;
+      padding: 10px 22px;
+      border-radius: 999px;
+      opacity: 0;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      pointer-events: none;
+      white-space: nowrap;
+      z-index: 200;
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    @media (min-width: 768px) { #toast { bottom: 36px; } }
+
+    /* ── 금색 세필 구분선 ── */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(212,175,55,0.4), transparent);
+      margin: 0 32px;
+    }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--ink); }
+    ::-webkit-scrollbar-thumb { background: #8a6d1f; border-radius: 2px; }
+    #galThumbs::-webkit-scrollbar { display: none; width: 0; }
+
+    /* ── Bottom fixed CTA (mobile) ── */
+    #bottomCta {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      z-index: 50;
+      background: linear-gradient(to top, rgba(5,8,16,0.98), rgba(5,8,16,0.7));
+      backdrop-filter: blur(8px);
+      padding: 10px 16px 16px;
+      border-top: 1px solid rgba(212,175,55,0.15);
+    }
+    @media (min-width: 768px) { #bottomCta { display: none !important; } }
+
+    .gold-border {
+      box-shadow: 0 0 0 1px rgba(212,175,55,0.3), 0 0 24px rgba(212,175,55,0.08);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(212,175,55,0.08);
+      border: 1px solid rgba(212,175,55,0.35);
+      border-radius: 999px;
+      padding: 4px 16px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.8rem;
+      color: #e6cf87;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+    }
+
+    #topBtn {
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    #topBtn:hover  { transform: translateY(-3px); }
+    #musicBtn:hover { opacity: 0.85; }
+    @media (max-width: 767px) {
+      #topBtn { bottom: 90px !important; }
+    }
+    @media (min-width: 768px) {
+      #topBtn { bottom: 32px !important; }
+    }
+    #musicBtn.muted { opacity: 0.45; }
+    #musicBtn.muted::after {
+      content: '';
+      position: absolute;
+      width: 2px; height: 22px;
+      background: rgba(255,255,255,0.7);
+      transform: rotate(45deg);
+      border-radius: 2px;
+    }
+
+    /* ── 가사 패널 ── */
+    .lyric-part {
+      font-family: 'Noto Sans KR', sans-serif;
+      color: rgba(240,216,120,0.55);
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      margin: 14px 0 6px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(212,175,55,0.15);
+    }
+    .lyric-part:first-of-type { border-top: none; padding-top: 0; margin-top: 0; }
+    .lyric-block { margin-bottom: 10px; }
+    .lyric-block .zh {
+      font-family: 'Song Myung', serif;
+      color: rgba(240,237,228,0.95);
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+    .lyric-block .ko {
+      font-family: 'Gowun Batang', serif;
+      color: rgba(212,175,55,0.75);
+      font-size: 0.8rem;
+      line-height: 1.5;
+    }
+    #lyricsPanel::-webkit-scrollbar { width: 3px; }
+    #lyricsPanel::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.4); }
+
+    /* 만월 글로우 */
+    .moon-orb {
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(223,230,240,0.9) 0%, rgba(223,230,240,0.25) 45%, transparent 70%);
+      filter: blur(2px);
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+<!-- 금빛 가루 파티클 (마우스 추적) -->
+<div id="dustContainer" aria-hidden="true"></div>
+
+<!-- ════════ NAVIGATION ════════ -->
+<nav id="mainNav" class="fixed top-0 left-0 right-0 z-50 px-4 py-3">
+  <div class="max-w-6xl mx-auto flex items-center justify-between">
+    <a href="#hero" class="flex items-center gap-2 no-underline">
+      <span class="text-lg">🌕</span>
+      <span class="font-title text-sm md:text-base tracking-wide">
+        <span class="grad-gold">달이 정한 연</span><span class="text-white/80 ml-1 font-eng italic text-xs md:text-sm">緣</span>
+      </span>
+    </a>
+    <div class="hidden md:flex items-center gap-6 text-sm font-ui">
+      <a href="#story"      class="text-white/60 hover:text-yellow-200 transition-colors">이야기</a>
+      <a href="#characters" class="text-white/60 hover:text-yellow-200 transition-colors">인물</a>
+      <a href="#gallery"    class="text-white/60 hover:text-yellow-200 transition-colors">장면</a>
+      <a href="#about"      class="text-white/60 hover:text-yellow-200 transition-colors">작품정보</a>
+    </div>
+    <div class="flex items-center gap-2">
+      <!-- 주제곡 토글 + 가사 드롭 (상단 고정) -->
+      <div id="musicWrap" class="relative flex items-center">
+        <button id="musicBtn" onclick="toggleMusic()" title="주제곡 化蝶 켜기/끄기"
+          style="position:relative; width:36px; height:36px; border-radius:50% 0 0 50%;
+                 background:rgba(16,21,40,0.85); backdrop-filter:blur(8px);
+                 border:1px solid rgba(212,175,55,0.4); border-right:none; cursor:pointer;
+                 color:white; font-size:14px; line-height:1;
+                 display:flex; align-items:center; justify-content:center;
+                 transition:opacity 0.3s ease;">🎵</button>
+        <button id="lyricsBtn" onclick="toggleLyrics(event)" title="가사 보기"
+          style="width:22px; height:36px; border-radius:0 50% 50% 0;
+                 background:rgba(16,21,40,0.85); backdrop-filter:blur(8px);
+                 border:1px solid rgba(212,175,55,0.4); cursor:pointer;
+                 color:rgba(240,216,120,0.9); font-size:10px; line-height:1;
+                 display:flex; align-items:center; justify-content:center;">▼</button>
+
+        <!-- 음악 안내 말풍선 -->
+        <div id="musicCallout" onclick="toggleMusic()"
+             style="position:absolute; top:calc(100% + 12px); right:0;
+                    background:rgba(8,12,24,0.96); backdrop-filter:blur(10px);
+                    border:1px solid rgba(212,175,55,0.5); border-radius:14px;
+                    padding:10px 16px; white-space:nowrap; cursor:pointer; z-index:69;
+                    box-shadow:0 8px 28px rgba(0,0,0,0.5), 0 0 18px rgba(212,175,55,0.12);">
+          <span class="font-ui" style="font-size:0.78rem; color:#f0d878;">🦋 두 주인공의 이야기를 노래로 들어보세요</span>
+          <span style="position:absolute; top:-6px; right:20px; width:10px; height:10px;
+                       background:rgba(8,12,24,0.96); border-left:1px solid rgba(212,175,55,0.5);
+                       border-top:1px solid rgba(212,175,55,0.5); transform:rotate(45deg);"></span>
+        </div>
+
+        <!-- 가사 패널 -->
+        <div id="lyricsPanel"
+             style="display:none; position:absolute; top:calc(100% + 10px); right:0;
+                    width:min(320px, 86vw); max-height:min(480px, 70vh); overflow-y:auto;
+                    background:rgba(8,12,24,0.97); backdrop-filter:blur(14px);
+                    border:1px solid rgba(212,175,55,0.35); border-radius:16px;
+                    box-shadow:0 16px 48px rgba(0,0,0,0.6); padding:18px 20px; z-index:70;
+                    text-align:left;">
+          <p class="font-title" style="color:#f0d878; font-size:1rem; margin-bottom:2px;">「化蝶飞向月中」</p>
+          <p class="font-ui" style="color:rgba(255,255,255,0.45); font-size:0.7rem; margin-bottom:12px;">
+            화접비향월중 — 주제곡 · 백서아 × 주하랑 듀엣</p>
+
+          <p class="lyric-part">1절 — 주하랑</p>
+          <div class="lyric-block">
+            <p class="zh">月光照过那座桥</p><p class="ko">달빛이 그 다리를 비추고</p>
+          </div>
+          <div class="lyric-block">
+            <p class="zh">桥下流水静静流</p><p class="ko">다리 아래 강물은 고요히 흐르네</p>
+          </div>
+          <div class="lyric-block">
+            <p class="zh">你在对岸对我笑</p><p class="ko">너는 건너편에서 나를 보고 웃는데</p>
+          </div>
+          <div class="lyric-block">
+            <p class="zh">我却不敢再回头</p><p class="ko">나는 차마 다시 돌아보지 못하네</p>
+          </div>
+
+          <p class="lyric-part">2절 — 백서아</p>
+          <div class="lyric-block">
+            <p class="zh">灯火一盏又一盏</p><p class="ko">등불이 하나 또 하나</p>
+          </div>
+          <div class="lyric-block">
+            <p class="zh">照不亮回家的路</p><p class="ko">돌아갈 길을 밝히지 못하네</p>
+          </div>
+          <div class="lyric-block">
+            <p class="zh">若两心注定相连</p><p class="ko">두 마음이 이어질 운명이라면</p>
+          </div>
+          <div class="lyric-block">
+            <p class="zh">何惧天涯与海角</p><p class="ko">하늘 끝 바다 끝인들 무엇이 두려우랴</p>
+          </div>
+
+          <p class="lyric-part">프리코러스</p>
+          <div class="lyric-block">
+            <p class="zh">一道墙 一条河</p><p class="ko">담 하나, 강 하나</p>
+          </div>
+          <div class="lyric-block">
+            <p class="zh">隔开两个世界的我们</p><p class="ko">두 세계로 갈라놓인 우리</p>
+          </div>
+
+          <p class="lyric-part">후렴 — 듀엣</p>
+          <div class="lyric-block">
+            <p class="zh">若此生无处安放</p><p class="ko">이생에 몸 둘 곳 없다면</p>
+          </div>
+          <div class="lyric-block">
+            <p class="zh">化蝶飞向月中</p><p class="ko">나비 되어 달 속으로 날아가리</p>
+          </div>
+          <div class="lyric-block">
+            <p class="zh">你我十指紧扣</p><p class="ko">너와 나 열 손가락 굳게 걸고</p>
+          </div>
+          <div class="lyric-block">
+            <p class="zh">不再放手其中</p><p class="ko">다시는 그 손을 놓지 않으리</p>
+          </div>
+          <div class="lyric-block">
+            <p class="zh">飞向月中</p><p class="ko">달 속으로</p>
+          </div>
+
+          <p class="lyric-part">3절</p>
+          <div class="lyric-block">
+            <p class="zh">不要怕 别回头</p><p class="ko">두려워 마, 돌아보지 마 (주하랑)</p>
+          </div>
+          <div class="lyric-block">
+            <p class="zh">跟你走</p><p class="ko">당신을 따라갈게요 (백서아)</p>
+          </div>
+          <div class="lyric-block">
+            <p class="zh">到那没有墙的地方</p><p class="ko">담이 없는 그곳으로 (주하랑)</p>
+          </div>
+          <div class="lyric-block">
+            <p class="zh">没有桥 也没有伤</p><p class="ko">다리도, 상처도 없는 곳 (백서아)</p>
+          </div>
+
+          <p class="lyric-part">브릿지</p>
+          <div class="lyric-block">
+            <p class="zh">月满时 再相见</p><p class="ko">달이 차오르면 다시 만나요 (백서아)</p>
+          </div>
+          <div class="lyric-block">
+            <p class="zh">就在那座桥的中间</p><p class="ko">바로 그 다리 한가운데서 (주하랑)</p>
+          </div>
+          <div class="lyric-block">
+            <p class="zh">就算全世界都不许</p><p class="ko">온 세상이 허락하지 않아도</p>
+          </div>
+          <div class="lyric-block">
+            <p class="zh">我也要牵你的手</p><p class="ko">나는 너의 손을 잡으리</p>
+          </div>
+
+          <p class="lyric-part">아웃트로 — 듀엣</p>
+          <div class="lyric-block">
+            <p class="zh">化蝶飞向月中</p><p class="ko">나비 되어 달 속으로</p>
+          </div>
+          <div class="lyric-block">
+            <p class="zh">飞向月中 飞向月中</p><p class="ko">달 속으로, 달 속으로</p>
+          </div>
+        </div>
+      </div>
+      <button onclick="toggleNav()" class="md:hidden text-white p-1" aria-label="메뉴">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+  <div id="mobileNav" class="hidden md:hidden mt-3 pt-3 border-t border-white/10 pb-2">
+    <div class="flex flex-col gap-4 text-sm font-ui">
+      <a href="#story"      onclick="toggleNav()" class="text-white/60 hover:text-yellow-200">이야기</a>
+      <a href="#characters" onclick="toggleNav()" class="text-white/60 hover:text-yellow-200">인물</a>
+      <a href="#gallery"    onclick="toggleNav()" class="text-white/60 hover:text-yellow-200">장면</a>
+      <a href="#about"      onclick="toggleNav()" class="text-white/60 hover:text-yellow-200">작품정보</a>
+      <a href="#share"      onclick="toggleNav()" class="text-white/60 hover:text-yellow-200">공유하기</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ════════ A. HERO ════════ -->
+<section id="hero" class="relative min-h-screen flex items-center overflow-hidden">
+
+  <!-- 배경: 월담 전경 어둡게 -->
+  <div aria-hidden="true" class="absolute inset-0 pointer-events-none">
+    <img src="img/world.jpg" alt="" class="w-full h-full object-cover opacity-25">
+    <div class="absolute inset-0" style="background:linear-gradient(to bottom, rgba(5,8,16,0.55), rgba(5,8,16,0.85) 70%, #050810 100%);"></div>
+    <!-- 만월 -->
+    <div class="moon-orb" style="top:6%; right:12%; width:160px; height:160px; opacity:0.55;"></div>
+    <div class="absolute top-0 right-0 w-[500px] h-[500px] rounded-full blur-3xl" style="background:rgba(223,230,240,0.06);"></div>
+    <div class="absolute bottom-1/4 left-0 w-[400px] h-[400px] rounded-full blur-3xl" style="background:rgba(163,33,46,0.08);"></div>
+  </div>
+
+  <div class="relative z-10 max-w-5xl mx-auto px-4 pt-24 pb-16 w-full text-center">
+
+    <div class="badge mb-6 mx-auto">✦ AI Cinematic Film ✦</div>
+
+    <h1 class="font-title text-4xl md:text-6xl lg:text-7xl mb-4" style="line-height:1.35;">
+      <span class="shimmer-text">달이 정한 연</span><span class="grad-gold text-3xl md:text-5xl align-top ml-1">緣</span>
+    </h1>
+    <p class="font-eng italic text-white/50 text-base md:text-xl tracking-[0.25em] mb-6">The Moon's Fated Bond</p>
+
+    <p class="text-white/70 text-base md:text-lg mb-10 leading-loose">
+      담과 다리를 사이에 둔 두 원수 가문의 연인.<br>
+      <span class="grad-crimson font-bold">화룡전의 주하랑</span>과 <span class="grad-moon font-bold">백월각의 백서아</span> —
+      네 번의 만월 아래 사랑하고, 발각되고, 헤어졌다가,<br class="hidden md:block">
+      끝내 <span class="grad-gold font-bold">한 쌍의 나비</span>가 되어 달로 날아오른다.
+    </p>
+
+    <!-- 21:9 플레이어 -->
+    <div id="heroPlayerWrap" class="relative mx-auto mb-8" style="max-width:860px;">
+      <div class="absolute inset-0 -m-3 rounded-3xl blur-2xl transition-all duration-500"
+           id="heroGlow" style="background:rgba(212,175,55,0.14);" aria-hidden="true"></div>
+
+      <div id="heroStack"
+           class="relative rounded-2xl overflow-hidden gold-border shadow-2xl bg-black"
+           style="aspect-ratio:2330/1000; border:1px solid rgba(212,175,55,0.25);">
+
+        <!-- 썸네일 -->
+        <div id="heroThumb" class="absolute inset-0 cursor-pointer group z-10" onclick="playInline()">
+          <img loading="eager" src="img/cover.jpg" alt="달이 정한 연(緣) 타이틀"
+               class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]">
+          <div class="absolute inset-0 bg-black/25 group-hover:bg-black/10 transition-colors"></div>
+          <div class="absolute inset-0 flex items-center justify-center">
+            <div class="play-pulse w-20 h-20 rounded-full bg-white/10 backdrop-blur-sm
+                        border-2 border-yellow-200/60 flex items-center justify-center
+                        hover:bg-white/25 transition-colors">
+              <span class="text-yellow-100 text-3xl ml-1">▶</span>
+            </div>
+          </div>
+          <div class="absolute bottom-4 inset-x-0 text-center md:hidden">
+            <span class="text-white/70 text-xs bg-black/50 px-3 py-1 rounded-full font-ui">Tap to Play</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-4 justify-center mb-8 font-ui">
+      <button onclick="openVideo()"
+        class="play-pulse text-black font-bold py-4 px-9 rounded-full text-lg shadow-lg
+               transition-all flex items-center justify-center gap-3"
+        style="background:linear-gradient(135deg,#f0d878,#d4af37);">
+        <span class="text-xl">▶</span> 본편 감상하기
+      </button>
+      <a href="#gallery"
+        class="border border-yellow-200/25 hover:border-yellow-200/60
+               text-white/70 hover:text-yellow-100 font-medium py-4 px-9 rounded-full
+               text-base transition-all flex items-center justify-center gap-2">
+        🦋 장면 모아보기
+      </a>
+    </div>
+
+    <div class="flex flex-wrap gap-6 justify-center font-ui text-white/45 text-sm">
+      <span>🌕 만월 4연(四緣)</span>
+      <span>⏱ 약 3분 47초</span>
+      <span>🎬 4K · 21:9 시네마스코프</span>
+      <span>👤 1인 제작</span>
+    </div>
+  </div>
+
+  <div class="absolute bottom-6 left-1/2 -translate-x-1/2 float-anim text-white/35 flex flex-col items-center gap-1">
+    <span class="text-[10px] tracking-widest uppercase font-eng">scroll</span>
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+    </svg>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ════════ C. STORY — 만월 4연 ════════ -->
+<section id="story" class="py-20 px-4">
+  <div class="max-w-6xl mx-auto">
+
+    <div class="text-center mb-14 reveal">
+      <p class="badge mb-4 mx-auto">Story</p>
+      <h2 class="font-title text-3xl md:text-4xl text-white mb-4">만월 4연<span class="grad-gold">(四緣)</span></h2>
+      <p class="text-white/55 max-w-xl mx-auto leading-loose">
+        달이 차오를 때마다 두 사람의 운명이 한 걸음씩 나아간다.<br class="hidden md:block">
+        네 번의 만월이 그리는 사랑의 궤적.
+      </p>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+      <!-- 1연 -->
+      <div class="story-card rounded-2xl overflow-hidden border border-white/8 reveal gold-border"
+           style="background:linear-gradient(to bottom,#101528,#0a0d1a); transition-delay:.05s">
+        <div class="aspect-video overflow-hidden">
+          <img loading="lazy" src="img/story1.jpg" alt="1차 만월 — 밀회" class="card-img w-full h-full object-cover">
+        </div>
+        <div class="p-5">
+          <div class="flex items-baseline gap-2 mb-2">
+            <span class="self-center w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 font-ui text-black"
+                  style="background:#d4af37;">1</span>
+            <h3 class="font-title text-lg text-white">밀회</h3>
+            <span class="text-white/40 text-xs font-ui">1차 밀회</span>
+          </div>
+          <p class="text-white/55 text-sm leading-relaxed">
+            회랑 제단에서의 첫 포옹.<br>"만월보다 네가 더 밝구나."
+          </p>
+        </div>
+      </div>
+
+      <!-- 2연 -->
+      <div class="story-card rounded-2xl overflow-hidden border border-white/8 reveal gold-border"
+           style="background:linear-gradient(to bottom,#101528,#0a0d1a); transition-delay:.15s">
+        <div class="aspect-video overflow-hidden">
+          <img loading="lazy" src="img/gal07.jpg" alt="만월 하루 전 — 백가 발코니 밀회" class="card-img w-full h-full object-cover">
+        </div>
+        <div class="p-5">
+          <div class="flex items-baseline gap-2 mb-2">
+            <span class="self-center w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 font-ui text-black"
+                  style="background:#d4af37;">2</span>
+            <h3 class="font-title text-lg text-white">월하</h3>
+            <span class="text-white/40 text-xs font-ui">2차 밀회</span>
+          </div>
+          <p class="text-white/55 text-sm leading-relaxed">
+            만월 하루 전, 백서아의 집.<br>"찾아졌다. 발이 알더라."
+          </p>
+        </div>
+      </div>
+
+      <!-- 3연 -->
+      <div class="story-card rounded-2xl overflow-hidden border border-white/8 reveal"
+           style="background:linear-gradient(to bottom,#1c0f14,#0e080b); transition-delay:.25s;
+                  box-shadow:0 0 0 1px rgba(163,33,46,0.35), 0 0 24px rgba(163,33,46,0.1);">
+        <div class="aspect-video overflow-hidden">
+          <img loading="lazy" src="img/g_f4.jpg" alt="3차 만월 — 발각" class="card-img w-full h-full object-cover">
+        </div>
+        <div class="p-5">
+          <div class="flex items-baseline gap-2 mb-2">
+            <span class="self-center w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 font-ui text-white"
+                  style="background:#a3212e;">3</span>
+            <h3 class="font-title text-lg text-white">발각</h3>
+            <span class="text-white/40 text-xs font-ui">3차 밀회</span>
+          </div>
+          <p class="text-white/55 text-sm leading-relaxed">
+            군사들의 급습.<br>맞잡은 두 손이 끝내 떨어진다.
+          </p>
+        </div>
+      </div>
+
+      <!-- 4연 -->
+      <div class="story-card rounded-2xl overflow-hidden border border-white/8 reveal gold-border"
+           style="background:linear-gradient(to bottom,#171307,#0d0b05); transition-delay:.35s">
+        <div class="aspect-video overflow-hidden">
+          <img loading="lazy" src="img/story_fall.jpg" alt="4차 만월 — 승화" class="card-img w-full h-full object-cover">
+        </div>
+        <div class="p-5">
+          <div class="flex items-baseline gap-2 mb-2">
+            <span class="self-center w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 font-ui text-black"
+                  style="background:linear-gradient(135deg,#f0d878,#d4af37);">4</span>
+            <h3 class="font-title text-lg text-white">승화</h3>
+            <span class="text-white/40 text-xs font-ui">4차 밀회</span>
+          </div>
+          <p class="text-white/55 text-sm leading-relaxed">
+            다시 만난 두 사람,<br>한 쌍의 나비가 되어 달로 날아오른다.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ════════ D. CHARACTERS ════════ -->
+<section id="characters" class="py-20 px-4">
+  <div class="max-w-6xl mx-auto">
+
+    <div class="text-center mb-14 reveal">
+      <p class="badge mb-4 mx-auto">Characters</p>
+      <h2 class="font-title text-3xl md:text-4xl text-white mb-4">운명 위에 선 사람들</h2>
+      <p class="text-white/55 font-ui text-sm">카드를 클릭하면 인물의 대사가 들려요</p>
+    </div>
+
+    <!-- 주연 3인 -->
+    <div class="grid md:grid-cols-3 gap-8 mb-10">
+
+      <!-- 주하랑 -->
+      <div class="char-card reveal rounded-2xl overflow-hidden shadow-xl"
+           style="background:linear-gradient(to bottom,#180d10,#0d0709);
+                  border:1px solid rgba(163,33,46,0.4); transition-delay:.05s"
+           onclick="toggleSpeech(this)">
+        <div class="speech">"찾아졌다. 발이 알더라."</div>
+        <div class="aspect-[3/4] overflow-hidden">
+          <img loading="lazy" src="img/ch_juharang.jpg" alt="주하랑"
+               class="w-full h-full object-cover object-top transition-transform duration-500 hover:scale-105">
+        </div>
+        <div class="px-6 pt-5 pb-6" style="border-top:1px solid rgba(163,33,46,0.25);">
+          <h3 class="font-title text-xl text-white mb-1">주하랑 <span class="grad-crimson text-sm">朱</span></h3>
+          <p class="text-red-300/70 text-xs mb-3 tracking-wide font-ui">화룡전(火龍殿)의 세자</p>
+          <p class="text-white/60 text-sm leading-relaxed">
+            금사 봉황의 진홍 예복.<br>담을 넘어 사랑을 찾아가는 붉은 가문의 아들.
+          </p>
+        </div>
+      </div>
+
+      <!-- 백서아 -->
+      <div class="char-card reveal rounded-2xl overflow-hidden shadow-xl"
+           style="background:linear-gradient(to bottom,#12141c,#0a0b10);
+                  border:1px solid rgba(223,230,240,0.3); transition-delay:.15s"
+           onclick="toggleSpeech(this)">
+        <div class="speech">"아는데도, 발이 이리로 와요."</div>
+        <div class="aspect-[3/4] overflow-hidden">
+          <img loading="lazy" src="img/ch_baekseoa.jpg" alt="백서아"
+               class="w-full h-full object-cover object-top transition-transform duration-500 hover:scale-105">
+        </div>
+        <div class="px-6 pt-5 pb-6" style="border-top:1px solid rgba(223,230,240,0.18);">
+          <h3 class="font-title text-xl text-white mb-1">백서아 <span class="grad-moon text-sm">白</span></h3>
+          <p class="text-slate-300/70 text-xs mb-3 tracking-wide font-ui">백월각(白月閣)의 소저</p>
+          <p class="text-white/60 text-sm leading-relaxed">
+            은실 나비 자수의 백은빛 사(紗).<br>달빛을 닮은 흰 가문의 딸.
+          </p>
+        </div>
+      </div>
+
+      <!-- 월무녀 -->
+      <div class="char-card reveal rounded-2xl overflow-hidden shadow-xl"
+           style="background:linear-gradient(to bottom,#101722,#090d14);
+                  border:1px solid rgba(212,175,55,0.35); transition-delay:.25s"
+           onclick="toggleSpeech(this)">
+        <div class="speech">"오늘 밤, 달이 그 위에 두 사람을 세운다."</div>
+        <div class="aspect-[3/4] overflow-hidden">
+          <img loading="lazy" src="img/ch_priestess.jpg" alt="월무녀"
+               class="w-full h-full object-cover object-top transition-transform duration-500 hover:scale-105">
+        </div>
+        <div class="px-6 pt-5 pb-6" style="border-top:1px solid rgba(212,175,55,0.2);">
+          <h3 class="font-title text-xl text-white mb-1">월무녀 <span class="grad-gold text-sm">月</span></h3>
+          <p class="text-yellow-200/60 text-xs mb-3 tracking-wide font-ui">눈을 가린 예언자</p>
+          <p class="text-white/60 text-sm leading-relaxed">
+            종루에서 세 번, 두 연인의<br>운명을 예언하는 달의 목소리.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 조연 3인 -->
+    <div class="grid grid-cols-3 gap-4 md:gap-8 max-w-3xl mx-auto">
+
+      <div class="char-card reveal rounded-xl overflow-hidden"
+           style="background:#0d0709; border:1px solid rgba(163,33,46,0.25); transition-delay:.1s"
+           onclick="toggleSpeech(this)">
+        <div class="speech">"백가의 여식을, 이 주가의 담 안에…"</div>
+        <div class="aspect-[3/4] overflow-hidden">
+          <img loading="lazy" src="img/ch_lordju.jpg" alt="주가주"
+               class="w-full h-full object-cover object-top transition-transform duration-500 hover:scale-105">
+        </div>
+        <div class="px-3 py-3 text-center">
+          <h4 class="font-title text-sm md:text-base text-white">주가주</h4>
+          <p class="text-white/40 text-[10px] md:text-xs font-ui">화룡전의 가주</p>
+        </div>
+      </div>
+
+      <div class="char-card reveal rounded-xl overflow-hidden"
+           style="background:#0c0a08; border:1px solid rgba(120,90,50,0.3); transition-delay:.2s"
+           onclick="toggleSpeech(this)">
+        <div class="speech">"…받으십시오."</div>
+        <div class="aspect-[3/4] overflow-hidden">
+          <img loading="lazy" src="img/ch_muyeong.jpg" alt="무영"
+               class="w-full h-full object-cover object-top transition-transform duration-500 hover:scale-105">
+        </div>
+        <div class="px-3 py-3 text-center">
+          <h4 class="font-title text-sm md:text-base text-white">무영</h4>
+          <p class="text-white/40 text-[10px] md:text-xs font-ui">주하랑의 호위무사</p>
+        </div>
+      </div>
+
+      <div class="char-card reveal rounded-xl overflow-hidden"
+           style="background:#0b0d12; border:1px solid rgba(223,230,240,0.2); transition-delay:.3s"
+           onclick="toggleSpeech(this)">
+        <div class="speech">"어서요, 아가씨."</div>
+        <div class="aspect-[3/4] overflow-hidden">
+          <img loading="lazy" src="img/ch_yeonhwa.jpg" alt="연화"
+               class="w-full h-full object-cover object-top transition-transform duration-500 hover:scale-105">
+        </div>
+        <div class="px-3 py-3 text-center">
+          <h4 class="font-title text-sm md:text-base text-white">연화</h4>
+          <p class="text-white/40 text-[10px] md:text-xs font-ui">백서아의 유모</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ════════ F. GALLERY ════════ -->
+<section id="gallery" class="py-20 px-4">
+  <div class="max-w-6xl mx-auto">
+
+    <div class="text-center mb-10 reveal">
+      <p class="badge mb-4 mx-auto">Gallery</p>
+      <h2 class="font-title text-3xl md:text-4xl text-white mb-4">장면 모아보기</h2>
+      <p class="text-white/55 font-ui text-sm">스와이프 또는 화살표로 이동 · 이미지를 탭하면 크게 보기</p>
+    </div>
+
+    <div class="max-w-3xl mx-auto reveal">
+
+      <!-- 21:9 스테이지 -->
+      <div id="galTrack"
+           class="relative rounded-2xl overflow-hidden shadow-2xl"
+           style="aspect-ratio:2330/1000; background:#000;
+                  border:1px solid rgba(212,175,55,0.3);
+                  box-shadow:0 0 0 1px rgba(212,175,55,0.15), 0 24px 48px rgba(0,0,0,0.6);">
+
+        <img id="galImg" src="" alt=""
+             class="absolute inset-0 w-full h-full object-cover cursor-pointer"
+             style="transition:opacity 0.35s ease;"
+             onclick="openLightbox(galIdx)">
+
+        <div class="absolute bottom-0 inset-x-0 pointer-events-none"
+             style="background:linear-gradient(to top,rgba(0,0,0,0.8) 0%,transparent 100%);
+                    padding:52px 16px 14px;">
+          <p id="galCap" class="text-white text-sm font-ui font-medium leading-snug"></p>
+        </div>
+
+        <div class="absolute top-3 right-3 bg-black/55 backdrop-blur-sm
+                    text-white/80 text-xs px-3 py-1 rounded-full font-ui">
+          <span id="galCnt">1 / 16</span>
+        </div>
+
+        <button onclick="galMove(-1)"
+          class="absolute left-2 top-1/2 -translate-y-1/2 z-10
+                 w-10 h-10 rounded-full bg-black/40 backdrop-blur-sm
+                 hover:bg-yellow-700/70 active:scale-95
+                 flex items-center justify-center text-white text-2xl
+                 transition-all duration-200 shadow-lg">‹</button>
+
+        <button onclick="galMove(1)"
+          class="absolute right-2 top-1/2 -translate-y-1/2 z-10
+                 w-10 h-10 rounded-full bg-black/40 backdrop-blur-sm
+                 hover:bg-yellow-700/70 active:scale-95
+                 flex items-center justify-center text-white text-2xl
+                 transition-all duration-200 shadow-lg">›</button>
+      </div>
+
+      <div class="mt-3 h-0.5 rounded-full bg-white/10 overflow-hidden">
+        <div id="galProgress" class="h-full rounded-full"
+             style="background:linear-gradient(90deg,#8a6d1f,#d4af37); width:8.33%; transition:width 0.35s ease;"></div>
+      </div>
+
+      <div id="galDots" class="flex justify-center gap-2 mt-3 flex-wrap"></div>
+
+      <div id="galThumbs" class="mt-3 flex gap-2 overflow-x-auto pb-1"
+           style="-webkit-overflow-scrolling:touch; scrollbar-width:none;"></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ════════ E. ABOUT ════════ -->
+<section id="about" class="py-20 px-4">
+  <div class="max-w-4xl mx-auto">
+
+    <div class="text-center mb-14 reveal">
+      <p class="badge mb-4 mx-auto">About</p>
+      <h2 class="font-title text-3xl md:text-4xl text-white mb-4">작품 정보</h2>
+      <p class="text-white/55 leading-loose">
+        기획부터 각본·연출·이미지·영상·음악·편집까지<br class="hidden md:block">
+        전 과정을 한 사람이 완성한 1인 AI 시네마.
+      </p>
+    </div>
+
+    <div class="grid sm:grid-cols-2 gap-5 mb-12">
+
+      <div class="rounded-2xl p-6 border border-white/8 reveal gold-border"
+           style="background:linear-gradient(135deg,#101528,#0a0d1a);">
+        <div class="text-3xl mb-3">🎬</div>
+        <h3 class="font-title text-white text-lg mb-2">포맷</h3>
+        <p class="text-white/65 mb-1 font-ui text-sm">4K · 21:9 시네마스코프</p>
+        <p class="text-white/40 text-sm font-ui">러닝타임 약 3분 47초 + 쿠키영상</p>
+      </div>
+
+      <div class="rounded-2xl p-6 border border-white/8 reveal gold-border"
+           style="background:linear-gradient(135deg,#101528,#0a0d1a); transition-delay:.08s">
+        <div class="text-3xl mb-3">🖋</div>
+        <h3 class="font-title text-white text-lg mb-2">모티프</h3>
+        <p class="text-white/65 mb-1 font-ui text-sm">로미오와 줄리엣 × 양산백·축영대</p>
+        <p class="text-white/40 text-sm font-ui">나비 연인 설화의 중화풍 재해석</p>
+      </div>
+
+      <div class="rounded-2xl p-6 border border-white/8 reveal gold-border"
+           style="background:linear-gradient(135deg,#101528,#0a0d1a); transition-delay:.16s">
+        <div class="text-3xl mb-3">⚙️</div>
+        <h3 class="font-title text-white text-lg mb-2">AI 파이프라인</h3>
+        <ul class="text-white/60 text-sm space-y-1 font-ui">
+          <li>• 이미지 — Midjourney · ChatGPT</li>
+          <li>• 영상 — Seedance 2.0 · Google Flow</li>
+          <li>• 음악 — Suno</li>
+          <li>• 편집 — CapCut</li>
+        </ul>
+      </div>
+
+      <div class="rounded-2xl p-6 border border-white/8 reveal gold-border"
+           style="background:linear-gradient(135deg,#101528,#0a0d1a); transition-delay:.24s">
+        <div class="text-3xl mb-3">🎵</div>
+        <h3 class="font-title text-white text-lg mb-2">음악</h3>
+        <p class="text-white/65 mb-1 font-ui text-sm">주제곡 「化蝶(화접)」 — 두 주인공 듀엣</p>
+        <p class="text-white/40 text-sm font-ui">얼후·고쟁 기반 시네마틱 국악 스코어</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ════════ G. SHARE ════════ -->
+<section id="share" class="py-20 px-4 pb-32 md:pb-20 relative overflow-hidden">
+  <!-- 엔딩 배경 -->
+  <div aria-hidden="true" class="absolute inset-0 pointer-events-none opacity-20">
+    <img src="img/ending.jpg" alt="" class="w-full h-full object-cover">
+    <div class="absolute inset-0" style="background:linear-gradient(to bottom, #050810 0%, transparent 40%, #050810 100%);"></div>
+  </div>
+
+  <div class="max-w-2xl mx-auto text-center relative z-10">
+    <div class="reveal">
+      <p class="badge mb-5 mx-auto">Share</p>
+      <h2 class="font-title text-3xl md:text-4xl text-white mb-4" style="line-height:1.5;">
+        달이 맺어준 이야기,<br>
+        <span class="shimmer-text">달빛 아래 나누세요</span>
+      </h2>
+      <p class="text-white/55 mb-10 leading-loose">
+        마음에 남은 장면이 있다면<br class="hidden md:block"> 소중한 사람에게도 이 달빛을 전해주세요.
+      </p>
+
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="py-10 px-4 border-t text-center" style="border-color:rgba(212,175,55,0.12);">
+  <p class="font-title text-white/50 text-base mb-1">달이 정한 연 <span class="font-eng">緣</span></p>
+  <p class="text-white/30 text-sm font-eng italic">The Moon's Fated Bond</p>
+  <p class="text-white/25 text-xs mt-2 font-ui">© 2026 AI Cinematic Film · Directed by Ji Soo</p>
+</footer>
+
+<!-- 배경음악: 주제곡 化蝶飞向月中 -->
+<audio id="bgMusic" loop preload="auto" src="bgm.mp3"></audio>
+
+<!-- TOP 버튼 -->
+<button id="topBtn" onclick="scrollToTop()" title="맨 위로"
+  style="display:none; position:fixed; bottom:88px; right:20px; z-index:60;
+         width:44px; height:44px; border-radius:50%;
+         background:linear-gradient(135deg,#b58b1f,#d4af37);
+         border:none; cursor:pointer; box-shadow:0 4px 16px rgba(212,175,55,0.4);
+         transition:opacity 0.3s ease, transform 0.3s ease;
+         color:#050810; font-size:18px; line-height:1;
+         align-items:center; justify-content:center;">▲</button>
+
+<!-- Mobile Bottom CTA -->
+<div id="bottomCta">
+  <button onclick="openVideo()"
+    class="w-full text-black font-bold py-3 rounded-full font-ui
+           flex items-center justify-center gap-2 shadow-xl"
+    style="background:linear-gradient(135deg,#f0d878,#d4af37);">
+    <span class="text-lg">▶</span> 본편 감상하기
+  </button>
+</div>
+
+<!-- ════════ LIGHTBOX ════════ -->
+<div id="lightbox" onclick="closeLightbox()">
+  <button onclick="prevImg(event)" aria-label="이전"
+    class="absolute left-2 md:left-6 top-1/2 -translate-y-1/2
+           w-11 h-11 rounded-full bg-white/10 hover:bg-white/25 active:scale-95
+           flex items-center justify-center text-white text-2xl z-10 transition-all">‹</button>
+  <button onclick="nextImg(event)" aria-label="다음"
+    class="absolute right-2 md:right-6 top-1/2 -translate-y-1/2
+           w-11 h-11 rounded-full bg-white/10 hover:bg-white/25 active:scale-95
+           flex items-center justify-center text-white text-2xl z-10 transition-all">›</button>
+
+  <div class="flex flex-col items-center gap-4 w-full max-w-4xl mx-auto px-10"
+       onclick="event.stopPropagation()">
+    <img id="lbImg" src="" alt=""
+         class="w-full rounded-xl shadow-2xl object-contain" style="max-height:70vh;">
+    <p id="lbCaption" class="text-white/60 text-sm text-center leading-snug font-ui"></p>
+    <p id="lbCounter" class="text-white/35 text-xs text-center -mt-2 font-ui"></p>
+    <button onclick="closeLightbox()"
+      class="w-full max-w-sm flex items-center justify-center gap-2
+             bg-white/12 hover:bg-white/22 active:scale-95
+             border border-white/25 hover:border-white/50
+             text-white font-semibold text-sm py-3 rounded-2xl
+             transition-all duration-200 shadow-lg font-ui"
+      style="backdrop-filter:blur(8px);">✕ 닫기</button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast">🔗 링크가 복사되었습니다. 달빛을 나눠주세요 🌕</div>
+
+<script>
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+window.addEventListener('load', () => { window.scrollTo(0, 0); });
+
+// ── Gallery Data ─────────────────────────────────────
+const GALLERY = [
+  { src: 'img/gal01.jpg', cap: '오프닝 — 월담 전경, 두 세계를 잇는 다리' },
+  { src: 'img/gal02.jpg', cap: '종루 — 청동 종을 어루만지는 월무녀' },
+  { src: 'img/gal03.jpg', cap: '월무녀의 예언 — "오늘 밤, 달이 두 사람을 세운다"' },
+  { src: 'img/gal04.jpg', cap: '유모의 배웅 — 밀회를 나서는 백서아' },
+  { src: 'img/gal05.jpg', cap: '1차 만월 — 회랑 제단의 첫 포옹' },
+  { src: 'img/gal06.jpg', cap: '새벽 이별 — "다음 만월에 — 여기서"' },
+  { src: 'img/gal07.jpg', cap: '만월 하루 전 — 백가 발코니 밀회' },
+  { src: 'img/gal08.jpg', cap: '신하의 귓속말 — 주가주의 서늘한 노여움' },
+  { src: 'img/gal09.jpg', cap: '3차 만월 — 맞잡은 손이 끝내 떼어지다' },
+  { src: 'img/gal10.jpg', cap: '연화와 무영 — 목숨을 건 편지 전달' },
+  { src: 'img/gal11.jpg', cap: '같은 표정 — 편지를 읽고 동시에 결심하다' },
+  { src: 'img/gal12.jpg', cap: '월무녀의 비통한 예감 — 나비가 먼저 알았다' },
+  { src: 'img/gal13.jpg', cap: '4차 만월 — 다시 잡은 손, "이번엔 안 놓아요"' },
+  { src: 'img/gal14.jpg', cap: '뛰어내림 — 빛이 터지며 황금나비 한 쌍으로' },
+  { src: 'img/gal15.jpg', cap: '나비의 비상 — 달을 향해, 둘만의 곳으로' },
+  { src: 'img/gal16.jpg', cap: '쿠키 — 감독과 함께' },
+];
+
+let lbIndex = 0;
+let lbStartX = 0;
+
+// ── 금빛 가루: 마우스를 따라 흩날림 ───────────────────
+(function goldDust() {
+  const container = document.getElementById('dustContainer');
+  let lastSpawn = 0;
+  function spawn(x, y) {
+    const now = performance.now();
+    if (now - lastSpawn < 28) return;   // 스로틀
+    lastSpawn = now;
+    const count = 1 + (Math.random() > 0.6 ? 1 : 0);
+    for (let i = 0; i < count; i++) {
+      const el = document.createElement('div');
+      el.className = 'dust';
+      const size = Math.random() * 5 + 2.5;
+      el.style.width = el.style.height = size + 'px';
+      el.style.left = (x + (Math.random() - 0.5) * 14) + 'px';
+      el.style.top  = (y + (Math.random() - 0.5) * 14) + 'px';
+      // 위쪽으로 살짝 흩어지며 사라짐
+      el.style.setProperty('--dx', ((Math.random() - 0.5) * 44) + 'px');
+      el.style.setProperty('--dy', (-(Math.random() * 38 + 12)) + 'px');
+      el.style.animationDuration = (Math.random() * 0.5 + 0.7) + 's';
+      container.appendChild(el);
+      setTimeout(() => el.remove(), 1300);
+    }
+  }
+  window.addEventListener('mousemove', e => spawn(e.clientX, e.clientY), { passive: true });
+  window.addEventListener('touchmove', e => {
+    const t = e.touches[0];
+    if (t) spawn(t.clientX, t.clientY);
+  }, { passive: true });
+})();
+
+// ── Nav ──────────────────────────────────────────────
+window.addEventListener('scroll', () => {
+  document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 50);
+}, { passive: true });
+function toggleNav() { document.getElementById('mobileNav').classList.toggle('hidden'); }
+
+// ── Scroll reveal ────────────────────────────────────
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+// ── Speech bubbles ───────────────────────────────────
+function toggleSpeech(card) {
+  const isOpen = card.classList.contains('speak');
+  document.querySelectorAll('.char-card').forEach(c => c.classList.remove('speak'));
+  if (!isOpen) card.classList.add('speak');
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('.char-card'))
+    document.querySelectorAll('.char-card').forEach(c => c.classList.remove('speak'));
+});
+
+// ── 본편 재생 = 유튜브 새 탭 ──────────────────────────
+// (다른 탭에서 영상을 보는 동안 이 페이지 음악은 visibilitychange로 자동 정지/재개)
+const YT_URL = 'https://youtu.be/awFmR7kNbv0';
+function openVideo()  { window.open(YT_URL, '_blank'); }
+function playInline() { openVideo(); }
+
+// ── Lightbox ─────────────────────────────────────────
+function openLightbox(i) {
+  lbIndex = i;
+  renderLb();
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function renderLb() {
+  document.getElementById('lbImg').src = GALLERY[lbIndex].src;
+  document.getElementById('lbCaption').textContent = GALLERY[lbIndex].cap;
+  document.getElementById('lbCounter').textContent = `${lbIndex + 1} / ${GALLERY.length}`;
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function prevImg(e) { e.stopPropagation(); lbIndex = (lbIndex - 1 + GALLERY.length) % GALLERY.length; renderLb(); }
+function nextImg(e) { e.stopPropagation(); lbIndex = (lbIndex + 1) % GALLERY.length; renderLb(); }
+document.getElementById('lightbox').addEventListener('touchstart', e => {
+  lbStartX = e.changedTouches[0].screenX;
+}, { passive: true });
+document.getElementById('lightbox').addEventListener('touchend', e => {
+  const diff = lbStartX - e.changedTouches[0].screenX;
+  if (Math.abs(diff) > 40) diff > 0 ? nextImg(e) : prevImg(e);
+});
+
+// ── Gallery carousel ─────────────────────────────────
+let galIdx = 0;
+let galAutoTimer = null;
+let galSwipeX = 0;
+
+function galRender(instant) {
+  const item = GALLERY[galIdx];
+  const img = document.getElementById('galImg');
+  if (instant) {
+    img.src = item.src;
+  } else {
+    img.style.opacity = 0;
+    setTimeout(() => { img.src = item.src; img.onload = () => img.style.opacity = 1; }, 180);
+  }
+  document.getElementById('galCap').textContent = item.cap;
+  document.getElementById('galCnt').textContent = `${galIdx + 1} / ${GALLERY.length}`;
+  document.getElementById('galProgress').style.width = ((galIdx + 1) / GALLERY.length * 100) + '%';
+  document.querySelectorAll('#galDots button').forEach((d, i) => {
+    d.style.background = i === galIdx ? '#d4af37' : 'rgba(255,255,255,0.2)';
+    d.style.width = i === galIdx ? '20px' : '8px';
+  });
+  document.querySelectorAll('#galThumbs img').forEach((t, i) => {
+    t.style.borderColor = i === galIdx ? '#d4af37' : 'transparent';
+    t.style.opacity = i === galIdx ? 1 : 0.5;
+  });
+  // 썸네일 스트립 내부만 가로 스크롤 (페이지 스크롤 방지)
+  const wrap = document.getElementById('galThumbs');
+  const activeThumb = wrap.children[galIdx];
+  if (activeThumb) {
+    wrap.scrollTo({
+      left: activeThumb.offsetLeft - wrap.clientWidth / 2 + activeThumb.clientWidth / 2,
+      behavior: 'smooth'
+    });
+  }
+}
+function galMove(dir) {
+  galIdx = (galIdx + dir + GALLERY.length) % GALLERY.length;
+  galRender();
+  galResetAuto();
+}
+function galGo(i) { galIdx = i; galRender(); galResetAuto(); }
+function galResetAuto() {
+  clearInterval(galAutoTimer);
+  galAutoTimer = setInterval(() => { galIdx = (galIdx + 1) % GALLERY.length; galRender(); }, 5000);
+}
+(function initGallery() {
+  const dots = document.getElementById('galDots');
+  const thumbs = document.getElementById('galThumbs');
+  GALLERY.forEach((item, i) => {
+    const d = document.createElement('button');
+    d.style.cssText = 'height:8px; width:8px; border-radius:999px; border:none; cursor:pointer;' +
+                      'background:rgba(255,255,255,0.2); transition:all 0.3s ease;';
+    d.onclick = () => galGo(i);
+    dots.appendChild(d);
+    const t = document.createElement('img');
+    t.src = item.src;
+    t.loading = 'lazy';
+    t.style.cssText = 'height:44px; aspect-ratio:21/9; object-fit:cover; border-radius:8px;' +
+                      'cursor:pointer; border:2px solid transparent; opacity:0.5; transition:all 0.3s ease; flex-shrink:0;';
+    t.onclick = () => galGo(i);
+    thumbs.appendChild(t);
+  });
+  galRender(true);
+  galResetAuto();
+  const track = document.getElementById('galTrack');
+  track.addEventListener('touchstart', e => { galSwipeX = e.changedTouches[0].screenX; }, { passive: true });
+  track.addEventListener('touchend', e => {
+    const diff = galSwipeX - e.changedTouches[0].screenX;
+    if (Math.abs(diff) > 40) galMove(diff > 0 ? 1 : -1);
+  });
+})();
+
+// ── 배경음악 ─────────────────────────────────────────
+const bgMusic = document.getElementById('bgMusic');
+const musicBtn = document.getElementById('musicBtn');
+let musicWanted = false;   // 사용자가 버튼을 눌러야 재생 시작
+bgMusic.volume = 0.22;
+
+// 버튼 아이콘이 항상 실제 재생 상태를 반영하도록
+bgMusic.addEventListener('play',  () => {
+  musicBtn.classList.remove('muted');
+  const c = document.getElementById('musicCallout');
+  if (c) { c.style.transition = 'opacity 0.4s ease'; c.style.opacity = 0; setTimeout(() => c.remove(), 450); }
+});
+bgMusic.addEventListener('pause', () => musicBtn.classList.add('muted'));
+
+// 탭을 떠나면(유튜브 시청 등) 음악 정지, 돌아오면 재개 — 켜둔 경우에만
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    bgMusic.pause();
+  } else if (musicWanted) {
+    startBgMusic();
+  }
+});
+
+function startBgMusic() {
+  if (!musicWanted) return;
+  bgMusic.play().then(() => {
+    musicBtn.classList.remove('muted');
+  }).catch(() => {});
+}
+function pauseBgMusic() { bgMusic.pause(); }
+// ── 가사 드롭다운 ─────────────────────────────────────
+function toggleLyrics(e) {
+  if (e) e.stopPropagation();
+  const p = document.getElementById('lyricsPanel');
+  p.style.display = p.style.display === 'none' ? 'block' : 'none';
+}
+document.addEventListener('click', e => {
+  const p = document.getElementById('lyricsPanel');
+  if (p.style.display !== 'none' && !e.target.closest('#musicWrap')) {
+    p.style.display = 'none';
+  }
+});
+
+function toggleMusic() {
+  if (bgMusic.paused) {
+    musicWanted = true;
+    bgMusic.play().catch(() => {});
+  } else {
+    musicWanted = false;
+    bgMusic.pause();
+    musicBtn.classList.add('muted');
+  }
+}
+// 재생은 사용자가 🎵 버튼(또는 안내 말풍선)을 누를 때만 시작
+
+// ── TOP 버튼 표시 (음악 버튼은 상단 고정) ─────────────
+window.addEventListener('scroll', () => {
+  document.getElementById('topBtn').style.display = window.scrollY > 400 ? 'flex' : 'none';
+}, { passive: true });
+function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+// ── 공유 ─────────────────────────────────────────────
+function copyLink() {
+  const url = location.href;
+  (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject())
+    .catch(() => {
+      const ta = document.createElement('textarea');
+      ta.value = url; document.body.appendChild(ta);
+      ta.select(); document.execCommand('copy'); ta.remove();
+    })
+    .finally(showToast);
+}
+function showToast() {
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2600);
+}
+function downloadPoster() {
+  const a = document.createElement('a');
+  a.href = 'img/cover.jpg';
+  a.download = '달이_정한_연_타이틀.jpg';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+
+// ── 키보드 ───────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  const lb = document.getElementById('lightbox').classList.contains('open');
+  if (!lb) return;
+  if (e.key === 'Escape')     closeLightbox();
+  if (e.key === 'ArrowLeft')  prevImg(e);
+  if (e.key === 'ArrowRight') nextImg(e);
+});
+</script>
+</body>
+</html>

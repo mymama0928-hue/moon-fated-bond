@@ -283,6 +283,11 @@
 
     /* 공유 섹션 배경 — 사용자 크롭본, 중앙 표시 */
     #shareBg { object-position: center center; }
+    /* 공유 섹션 높이 — 모바일은 낮게, 데스크톱은 이미지가 넓게 보이도록 */
+    #share { min-height: 440px; }
+    @media (min-width: 768px) {
+      #share { min-height: min(700px, 90vh); }
+    }
 
     /* 만월 글로우 */
     .moon-orb {
@@ -906,8 +911,7 @@
 <div class="divider"></div>
 
 <!-- ════════ G. SHARE ════════ -->
-<section id="share" class="py-24 px-4 pb-36 md:pb-24 relative overflow-hidden flex items-center"
-         style="min-height:min(700px, 90vh);">
+<section id="share" class="py-24 px-4 pb-36 md:pb-24 relative overflow-hidden flex items-center">
   <!-- 편지의 밤 배경 -->
   <div aria-hidden="true" class="absolute inset-0 pointer-events-none opacity-20">
     <img id="shareBg" src="img/share_bg.jpg" alt="" class="w-full h-full object-cover">
@@ -1233,6 +1237,11 @@ function toggleMusic() {
 // ── TOP 버튼 표시 (음악 버튼은 상단 고정) ─────────────
 window.addEventListener('scroll', () => {
   document.getElementById('topBtn').style.display = window.scrollY > 400 ? 'flex' : 'none';
+  // 스크롤해 내려가면 음악 안내 말풍선 제거 (본문 가림 방지)
+  if (window.scrollY > 250) {
+    const c = document.getElementById('musicCallout');
+    if (c) { c.style.transition = 'opacity 0.4s ease'; c.style.opacity = 0; setTimeout(() => c.remove(), 450); }
+  }
 }, { passive: true });
 function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
 

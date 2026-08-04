@@ -281,6 +281,12 @@
     #lyricsPanel::-webkit-scrollbar { width: 3px; }
     #lyricsPanel::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.4); }
 
+    /* 공유 섹션 배경 — 좁은 화면: 인물 중심 / 넓은 화면: 분할선 중앙 */
+    #shareBg { object-position: 68% 40%; }
+    @media (min-width: 1024px) {
+      #shareBg { object-position: 100% 40%; }
+    }
+
     /* 만월 글로우 */
     .moon-orb {
       position: absolute;
@@ -907,7 +913,7 @@
          style="min-height:min(700px, 90vh);">
   <!-- 편지의 밤 배경 -->
   <div aria-hidden="true" class="absolute inset-0 pointer-events-none opacity-20">
-    <img src="img/gal11.jpg" alt="" class="w-full h-full object-cover" style="object-position:100% 40%;">
+    <img id="shareBg" src="img/gal11.jpg" alt="" class="w-full h-full object-cover">
     <div class="absolute inset-0" style="background:linear-gradient(to bottom, #050810 0%, transparent 40%, #050810 100%);"></div>
   </div>
 
